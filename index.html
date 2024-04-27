@@ -9,14 +9,16 @@
   <div id="gyroData">
     Waiting for gyro data...
   </div>
-
-<script>
-  window.addEventListener('deviceorientation', function(event) {
-    var alpha = event.alpha;
-    var beta = event.beta;
-    var gamma = event.gamma;
-    document.getElementById('gyroData').innerHTML = "X: " + alpha.toFixed(2) + "<br>Y: " + beta.toFixed(2) + "<br>Z: " + gamma.toFixed(2);
   
+<script>
+  window.addEventListener('deviceorientation', handleOrientation);
+
+  function handleOrientation(event) {
+    const alpha = event.alpha;
+    const beta = event.beta;
+    const gamma = event.gamma;
+    document.getElementById('gyroData').innerHTML = "X: " + alpha.toFixed(2) + "<br>Y: " + beta.toFixed(2) + "<br>Z: " + gamma.toFixed(2);
+}
   function onClick() {
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
     // Handle iOS 13+ devices.
