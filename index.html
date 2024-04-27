@@ -9,6 +9,7 @@
   body {
     font-family: Arial, sans-serif;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -17,9 +18,19 @@
   canvas {
     max-width: 90%;
   }
+  #permissionButton {
+    margin-top: 20px;
+    font-size: 16px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+  }
 </style>
 <script>
-  // Initialize an empty array to store gyroscope data
   let gyroData = [];
 
   function handleOrientation(event) {
@@ -27,15 +38,12 @@
     const beta = event.beta;
     const gamma = event.gamma;
 
-    // Push the gyroscope data into the array
     gyroData.push({ alpha, beta, gamma });
 
-    // If there are more than 100 data points, remove the oldest one
     if (gyroData.length > 100) {
       gyroData.shift();
     }
 
-    // Update the chart with the new gyroscope data
     updateChart();
   }
 
@@ -55,12 +63,9 @@
     }
   }
 
-  // Function to update the chart with gyroscope data
   function updateChart() {
-    // Get the canvas element
     const ctx = document.getElementById('gyroChart').getContext('2d');
 
-    // Define the data for the chart
     const data = {
       labels: Array.from({ length: gyroData.length }, (_, i) => i + 1),
       datasets: [
@@ -88,7 +93,6 @@
       ]
     };
 
-    // Define the options for the chart
     const options = {
       responsive: true,
       maintainAspectRatio: false,
@@ -108,7 +112,6 @@
       }
     };
 
-    // Create the chart
     const gyroChart = new Chart(ctx, {
       type: 'line',
       data: data,
@@ -116,16 +119,15 @@
     });
   }
 
-  // Trigger permission request on page load
   document.addEventListener('DOMContentLoaded', function() {
     requestGyroscopePermission();
   });
 </script>
 </head>
 <body>
-  <div style="width: 80%; max-width: 600px;">
-    <canvas id="gyroChart"></canvas>
-  </div>
- </body>
+<div style="width: 80%; max-width: 600px;">
+  <canvas id="gyroChart"></canvas>
+</div>
+<button id="permissionButton" onclick="requestGyroscopePermission()">Request Gyroscope Permission</button>
+</body>
 </html>
-  
