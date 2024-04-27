@@ -6,13 +6,16 @@
 <title>Gyroscope Data</title>
 </head>
 <body>
+  <div id="gyroData">
+    Waiting for gyro data...
+  </div>
 
 <script>
   window.addEventListener('deviceorientation', function(event) {
     var alpha = event.alpha;
     var beta = event.beta;
     var gamma = event.gamma;
-    console.log("X: " + alpha.toFixed(2) + ", Y: " + beta.toFixed(2) + ", Z: " + gamma.toFixed(2));
+    document.getElementById('gyroData').innerHTML = "X: " + alpha.toFixed(2) + "<br>Y: " + beta.toFixed(2) + "<br>Z: " + gamma.toFixed(2);
   
   function onClick() {
     if (typeof DeviceMotionEvent.requestPermission === 'function') {
