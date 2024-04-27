@@ -9,18 +9,21 @@
   body {
     font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    flex-direction: column;
   }
   canvas {
-    max-width: 90%;
+    max-width: 80%;
+  }
+  #gyroData {
+    font-size: 24px;
+    margin-bottom: 20px;
   }
   #permissionButton {
-    margin-top: 20px;
-    font-size: 16px;
+    font-size: 18px;
     padding: 10px 20px;
     cursor: pointer;
     background-color: #007bff;
@@ -32,6 +35,8 @@
 </style>
 <script>
   let gyroData = [];
+  let timestamp = 0;
+  let intervalId;
   let gyroChart;
 
   function handleOrientation(event) {
@@ -39,13 +44,14 @@
     const beta = event.beta;
     const gamma = event.gamma;
 
-    gyroData.push({ alpha, beta, gamma });
+    gyroData.push({ timestamp, alpha, beta, gamma });
+    timestamp += 0.2;
 
-    if (gyroData.length > 100) {
-      gyroData.shift();
+    if (timestamp >= 20) {
+      clearInterval(intervalId);
+      deactivateSensors();
+      renderGraph();
     }
-
-    updateChart();
   }
 
   function requestGyroscopePermission() {
@@ -54,41 +60,50 @@
         .then(permissionState => {
           if (permissionState === 'granted') {
             window.addEventListener('deviceorientation', handleOrientation);
-            createChart();
+            intervalId = setInterval(() => {
+              timestamp += 0.2;
+            }, 200);
           } else {
             console.error('Permission to access gyroscope data was denied.');
+            document.getElementById('permissionButton').style.display = 'block';
           }
         })
         .catch(console.error);
     } else {
       window.addEventListener('deviceorientation', handleOrientation);
-      createChart();
+      intervalId = setInterval(() => {
+        timestamp += 0.2;
+      }, 200);
     }
   }
 
-  function createChart() {
+  function deactivateSensors() {
+    window.removeEventListener('deviceorientation', handleOrientation);
+  }
+
+  function renderGraph() {
     const ctx = document.getElementById('gyroChart').getContext('2d');
 
     const data = {
-      labels: Array.from({ length: gyroData.length }, (_, i) => i + 1),
+      labels: gyroData.map(dataPoint => dataPoint.timestamp.toFixed(2)),
       datasets: [
         {
           label: 'Alpha',
-          data: gyroData.map(data => data.alpha),
+          data: gyroData.map(dataPoint => dataPoint.alpha.toFixed(2)),
           borderColor: 'rgba(255, 99, 132, 1)',
           borderWidth: 1,
           fill: false
         },
         {
           label: 'Beta',
-          data: gyroData.map(data => data.beta),
+          data: gyroData.map(dataPoint => dataPoint.beta.toFixed(2)),
           borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1,
           fill: false
         },
         {
           label: 'Gamma',
-          data: gyroData.map(data => data.gamma),
+          data: gyroData.map(dataPoint => dataPoint.gamma.toFixed(2)),
           borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1,
           fill: false
@@ -103,7 +118,7 @@
         xAxes: [{
           scaleLabel: {
             display: true,
-            labelString: 'Data Points'
+            labelString: 'Time (s)'
           }
         }],
         yAxes: [{
@@ -120,6 +135,9 @@
       data: data,
       options: options
     });
+
+    // Hide gyro data display
+    document.getElementById('gyroData').style.display = 'none';
   }
 
   document.addEventListener('DOMContentLoaded', function() {
@@ -128,6 +146,9 @@
 </script>
 </head>
 <body>
+<div id="gyroData">
+  Gyroscope data will appear here...
+</div>
 <div style="width: 80%; max-width: 600px;">
   <canvas id="gyroChart"></canvas>
 </div>
