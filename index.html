@@ -47,6 +47,8 @@
     gyroData.push({ timestamp, alpha, beta, gamma });
     timestamp += 0.2;
 
+    updateGyroDataDisplay(alpha, beta, gamma);
+
     if (timestamp >= 20) {
       clearInterval(intervalId);
       deactivateSensors();
@@ -79,6 +81,16 @@
 
   function deactivateSensors() {
     window.removeEventListener('deviceorientation', handleOrientation);
+  }
+
+  function updateGyroDataDisplay(alpha, beta, gamma) {
+    document.getElementById('gyroData').innerHTML = `
+      Alpha: ${alpha.toFixed(2)}
+      <br>
+      Beta: ${beta.toFixed(2)}
+      <br>
+      Gamma: ${gamma.toFixed(2)}
+    `;
   }
 
   function renderGraph() {
