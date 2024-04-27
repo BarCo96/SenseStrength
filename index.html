@@ -120,7 +120,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    requestGyroscopePermission();
+    document.getElementById('permissionButton').addEventListener('click', requestGyroscopePermission);
   });
 </script>
 </head>
@@ -128,6 +128,6 @@
 <div style="width: 80%; max-width: 600px;">
   <canvas id="gyroChart"></canvas>
 </div>
-<button id="permissionButton" onclick="requestGyroscopePermission()">Request Gyroscope Permission</button>
+<button id="permissionButton">Request Gyroscope Permission</button>
 </body>
 </html>
