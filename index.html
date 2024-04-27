@@ -4,39 +4,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gyroscope Data</title>
-</head>
-<body>
-  <div id="gyroData">
-    Waiting for gyro data...11
-  </div>
-  
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  #gyroData {
+    font-size: 24px;
+  }
+</style>
 <script>
-  window.addEventListener('deviceorientation', handleOrientation);
-
   function handleOrientation(event) {
     const alpha = event.alpha;
     const beta = event.beta;
     const gamma = event.gamma;
-    document.getElementById('gyroData').innerHTML = "X: " + alpha.toFixed(2) + "<br>Y: " + beta.toFixed(2) + "<br>Z: " + gamma.toFixed(2);
-}
-  function onClick() {
-    if (typeof DeviceMotionEvent.requestPermission === 'function') {
-    // Handle iOS 13+ devices.
-    DeviceMotionEvent.requestPermission()
-      .then((state) => {
-        if (state === 'granted') {
-          window.addEventListener('devicemotion', handleOrientation);
-        } else {
-          console.error('Request to access the orientation was rejected');
-        }
-      })
-      .catch(console.error);
-  } else {
-    // Handle regular non iOS 13+ devices.
-    window.addEventListener('devicemotion', handleOrientation);
+
+    document.getElementById('gyroData').innerHTML = `
+      Alpha: ${alpha.toFixed(2)}
+      <br>
+      Beta: ${beta.toFixed(2)}
+      <br>
+      Gamma: ${gamma.toFixed(2)}
+    `;
   }
-}
-  ;
+
+  function requestGyroscopePermission() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(permissionState => {
+          if (permissionState === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation);
+          } else {
+            console.error('Permission to access gyroscope data was denied.');
+          }
+        })
+        .catch(console.error);
+    } else {
+      window.addEventListener('deviceorientation', handleOrientation);
+    }
+  }
+
+  // Trigger permission request on user interaction (e.g., click)
+  document.addEventListener('DOMContentLoaded', function() {
+    requestGyroscopePermission();
+  });
 </script>
+</head>
+<body>
+<div id="gyroData">
+  Gyroscope data will appear here...
+</div>
 </body>
 </html>
