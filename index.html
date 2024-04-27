@@ -11,24 +11,36 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: Arial, sans-serif;
   }
-  #gyroscopeData {
+  #gyroData {
     font-size: 24px;
   }
 </style>
 </head>
 <body>
-<div id="gyroscopeData">
-  Gyroscope Data will appear here...
+<div id="gyroData">
+  Waiting for gyro data...1111
 </div>
 
 <script>
-  window.addEventListener('deviceorientation', function(event) {
-    var alpha = event.alpha;
-    var beta = event.beta;
-    var gamma = event.gamma;
-    document.getElementById('gyroscopeData').innerHTML = "Alpha: " + alpha.toFixed(2) + "<br>Beta: " + beta.toFixed(2) + "<br>Gamma: " + gamma.toFixed(2);
-  });
+  if ('Gyroscope' in window) {
+    let gyro = new Gyroscope();
+
+    gyro.addEventListener('reading', () => {
+      document.getElementById('gyroData').innerHTML = `
+        X: ${gyro.x.toFixed(2)}
+        <br>
+        Y: ${gyro.y.toFixed(2)}
+        <br>
+        Z: ${gyro.z.toFixed(2)}
+      `;
+    });
+
+    gyro.start();
+  } else {
+    document.getElementById('gyroData').innerText = 'Gyroscope sensor not supported on this device.';
+  }
 </script>
 </body>
 </html>
