@@ -16,6 +16,16 @@
   #gyroData {
     font-size: 24px;
   }
+  #permissionButton {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+  }
 </style>
 <script>
   function handleOrientation(event) {
@@ -48,9 +58,9 @@
     }
   }
 
-  // Trigger permission request on user interaction (e.g., click)
+  // Trigger permission request on button click
   document.addEventListener('DOMContentLoaded', function() {
-    requestGyroscopePermission();
+    document.getElementById('permissionButton').addEventListener('click', requestGyroscopePermission);
   });
 </script>
 </head>
@@ -58,5 +68,6 @@
 <div id="gyroData">
   Gyroscope data will appear here...
 </div>
+<button id="permissionButton">Request Gyroscope Permission</button>
 </body>
 </html>
