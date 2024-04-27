@@ -4,43 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gyroscope Data</title>
-<style>
-  body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-  }
-  #gyroData {
-    font-size: 24px;
-  }
-</style>
 </head>
 <body>
-<div id="gyroData">
-  Waiting for gyro data...1111
-</div>
 
 <script>
-  if ('Gyroscope' in window) {
-    let gyro = new Gyroscope();
-
-    gyro.addEventListener('reading', () => {
-      document.getElementById('gyroData').innerHTML = `
-        X: ${gyro.x.toFixed(2)}
-        <br>
-        Y: ${gyro.y.toFixed(2)}
-        <br>
-        Z: ${gyro.z.toFixed(2)}
-      `;
-    });
-
-    gyro.start();
+  window.addEventListener('deviceorientation', function(event) {
+    var alpha = event.alpha;
+    var beta = event.beta;
+    var gamma = event.gamma;
+    console.log("X: " + alpha.toFixed(2) + ", Y: " + beta.toFixed(2) + ", Z: " + gamma.toFixed(2));
+  
+  function onClick() {
+    if (typeof DeviceMotionEvent.requestPermission === 'function') {
+    // Handle iOS 13+ devices.
+    DeviceMotionEvent.requestPermission()
+      .then((state) => {
+        if (state === 'granted') {
+          window.addEventListener('devicemotion', handleOrientation);
+        } else {
+          console.error('Request to access the orientation was rejected');
+        }
+      })
+      .catch(console.error);
   } else {
-    document.getElementById('gyroData').innerText = 'Gyroscope sensor not supported on this device.';
+    // Handle regular non iOS 13+ devices.
+    window.addEventListener('devicemotion', handleOrientation);
   }
+}
+  });
 </script>
 </body>
 </html>
