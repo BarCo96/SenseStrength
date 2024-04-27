@@ -32,6 +32,7 @@
 </style>
 <script>
   let gyroData = [];
+  let gyroChart;
 
   function handleOrientation(event) {
     const alpha = event.alpha;
@@ -53,6 +54,7 @@
         .then(permissionState => {
           if (permissionState === 'granted') {
             window.addEventListener('deviceorientation', handleOrientation);
+            createChart();
           } else {
             console.error('Permission to access gyroscope data was denied.');
           }
@@ -60,10 +62,11 @@
         .catch(console.error);
     } else {
       window.addEventListener('deviceorientation', handleOrientation);
+      createChart();
     }
   }
 
-  function updateChart() {
+  function createChart() {
     const ctx = document.getElementById('gyroChart').getContext('2d');
 
     const data = {
@@ -112,7 +115,7 @@
       }
     };
 
-    const gyroChart = new Chart(ctx, {
+    gyroChart = new Chart(ctx, {
       type: 'line',
       data: data,
       options: options
