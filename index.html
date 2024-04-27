@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gyroscope Data</title>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #gyroscopeData {
+    font-size: 24px;
+  }
+</style>
+</head>
+<body>
+<div id="gyroscopeData">
+  Gyroscope Data will appear here...
+</div>
+
+<script>
+  window.addEventListener('deviceorientation', function(event) {
+    var alpha = event.alpha;
+    var beta = event.beta;
+    var gamma = event.gamma;
+    document.getElementById('gyroscopeData').innerHTML = "Alpha: " + alpha.toFixed(2) + "<br>Beta: " + beta.toFixed(2) + "<br>Gamma: " + gamma.toFixed(2);
+  });
+</script>
+</body>
+</html>
