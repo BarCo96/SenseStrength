@@ -49,7 +49,7 @@
 
     updateGyroDataDisplay(alpha, beta, gamma);
 
-    if (timestamp >= 20) {
+    if (timestamp >= 100) { // Change the time limit to 100 seconds
       clearInterval(intervalId);
       deactivateSensors();
       renderGraph();
