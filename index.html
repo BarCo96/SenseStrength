@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Push-up Counter</title>
+<style>
+  #gyroData {
+    margin-bottom: 20px;
+  }
+</style>
 <script>
   let a = false;
   let b = false;
@@ -11,7 +16,17 @@
   let pushUpCount = 0;
 
   function handleOrientation(event) {
+    const alpha = event.alpha;
     const beta = event.beta;
+    const gamma = event.gamma;
+
+    document.getElementById('gyroData').innerHTML = `
+      Alpha: ${alpha.toFixed(2)}
+      <br>
+      Beta: ${beta.toFixed(2)}
+      <br>
+      Gamma: ${gamma.toFixed(2)}
+    `;
 
     if (!a && beta < -75) {
       a = true;
@@ -55,7 +70,9 @@
 <div id="gyroData">
   Gyroscope data will appear here...
 </div>
-<div id="pushUpCount">0</div>
+<div>
+  <div>Push-up Count: <span id="pushUpCount">0</span></div>
+</div>
 <button id="permissionButton" onclick="requestGyroscopePermission()">Request Gyroscope Permission</button>
 </body>
 </html>
