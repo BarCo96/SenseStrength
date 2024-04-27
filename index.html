@@ -3,56 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gyroscope Data Graph</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    flex-direction: column;
-  }
-  canvas {
-    max-width: 80%;
-  }
-  #gyroData {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  #permissionButton {
-    font-size: 18px;
-    padding: 10px 20px;
-    cursor: pointer;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    outline: none;
-  }
-</style>
+<title>Push-up Counter</title>
 <script>
-  let gyroData = [];
-  let timestamp = 0;
-  let intervalId;
-  let gyroChart;
+  let a = false;
+  let b = false;
+  let c = false;
+  let pushUpCount = 0;
 
   function handleOrientation(event) {
-    const alpha = event.alpha;
     const beta = event.beta;
-    const gamma = event.gamma;
 
-    gyroData.push({ timestamp, alpha, beta, gamma });
-    timestamp += 0.2;
+    if (!a && beta < -75) {
+      a = true;
+    } else if (a && beta > 10) {
+      b = true;
+    } else if (a && b && beta < -75) {
+      c = true;
+    }
 
-    updateGyroDataDisplay(alpha, beta, gamma);
-
-    if (timestamp >= 100) { // Change the time limit to 100 seconds
-      clearInterval(intervalId);
-      deactivateSensors();
-      renderGraph();
+    if (a && b && c) {
+      pushUpCount++;
+      updatePushUpCount(pushUpCount);
+      a = false;
+      b = false;
+      c = false;
     }
   }
 
@@ -62,119 +36,26 @@
         .then(permissionState => {
           if (permissionState === 'granted') {
             window.addEventListener('deviceorientation', handleOrientation);
-            intervalId = setInterval(() => {
-              timestamp += 0.2;
-            }, 200);
           } else {
             console.error('Permission to access gyroscope data was denied.');
-            document.getElementById('permissionButton').style.display = 'block';
           }
         })
         .catch(console.error);
     } else {
       window.addEventListener('deviceorientation', handleOrientation);
-      intervalId = setInterval(() => {
-        timestamp += 0.2;
-      }, 200);
     }
   }
 
-  function deactivateSensors() {
-    window.removeEventListener('deviceorientation', handleOrientation);
+  function updatePushUpCount(count) {
+    document.getElementById('pushUpCount').innerText = count;
   }
-
-  function updateGyroDataDisplay(alpha, beta, gamma) {
-    document.getElementById('gyroData').innerHTML = `
-      Alpha: ${alpha.toFixed(2)}
-      <br>
-      Beta: ${beta.toFixed(2)}
-      <br>
-      Gamma: ${gamma.toFixed(2)}
-    `;
-  }
-
-  function renderGraph() {
-    const ctx = document.getElementById('gyroChart').getContext('2d');
-
-    const data = {
-      labels: gyroData.map(dataPoint => dataPoint.timestamp.toFixed(2)),
-      datasets: [
-        {
-          label: 'Alpha',
-          data: gyroData.map(dataPoint => dataPoint.alpha.toFixed(2)),
-          borderColor: 'rgba(255, 99, 132, 1)',
-          borderWidth: 1,
-          fill: false,
-          pointRadius: 1, // Set the radius of each data point
-          pointHoverRadius: 1 // Set the radius of each data point on hover
-        },
-        {
-          label: 'Beta',
-          data: gyroData.map(dataPoint => dataPoint.beta.toFixed(2)),
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1,
-          fill: false,
-          pointRadius: 1, // Set the radius of each data point
-          pointHoverRadius: 1 // Set the radius of each data point on hover
-        },
-        {
-          label: 'Gamma',
-          data: gyroData.map(dataPoint => dataPoint.gamma.toFixed(2)),
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1,
-          fill: false,
-          pointRadius: 1, // Set the radius of each data point
-          pointHoverRadius: 1 // Set the radius of each data point on hover
-        }
-      ]
-    };
-
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        xAxes: [{
-          scaleLabel: {
-            display: true,
-            labelString: 'Time (s)'
-          }
-        }],
-        yAxes: [{
-          scaleLabel: {
-            display: true,
-            labelString: 'Gyroscope Value'
-          },
-          ticks: {
-            min: -200, // Set the minimum value of the y-axis
-            max: 360,  // Set the maximum value of the y-axis
-            stepSize: 40 // Set the step size between ticks
-          }
-        }]
-      }
-    };
-
-    gyroChart = new Chart(ctx, {
-      type: 'line',
-      data: data,
-      options: options
-    });
-
-    // Hide gyro data display
-    document.getElementById('gyroData').style.display = 'none';
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('permissionButton').addEventListener('click', requestGyroscopePermission);
-  });
 </script>
 </head>
 <body>
 <div id="gyroData">
   Gyroscope data will appear here...
 </div>
-<div style="width: 80%; max-width: 600px;">
-  <canvas id="gyroChart"></canvas>
-</div>
-<button id="permissionButton">Request Gyroscope Permission</button>
+<div id="pushUpCount">0</div>
+<button id="permissionButton" onclick="requestGyroscopePermission()">Request Gyroscope Permission</button>
 </body>
 </html>
